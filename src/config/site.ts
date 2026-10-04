@@ -3,8 +3,8 @@
  */
 
 export const siteConfig = {
-  name: "OTP Shield",
-  shortName: "OTPShield",
+  name: "Orion Security",
+  shortName: "OrionSecurity",
   description:
     "Ultra-reliable, high-throughput OTP verification platform with multi-channel routing (SMS, WhatsApp, Email) and instant failover.",
   url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
@@ -12,8 +12,8 @@ export const siteConfig = {
   links: {
     github: "https://github.com/kpunit333/otp-service-frontend",
     docs: "/dashboard/docs",
-    support: "mailto:support@otpshield.io",
+    support: "mailto:support@orionsecurity.io",
   },
-  author: "OTP Shield Engineering Team",
+  author: "Orion Security Engineering Team",
   version: "1.0.0",
 };

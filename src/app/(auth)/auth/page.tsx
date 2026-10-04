@@ -2,8 +2,8 @@ import React, { Suspense } from "react";
 import { AuthCard } from "@/features/auth";
 
 export const metadata = {
-  title: "Authentication | OTP Shield",
-  description: "Sign in or register your organization for OTP Shield",
+  title: "Authentication | Orion Security",
+  description: "Sign in or register your organization for Orion Security",
 };
 
 export default function AuthPage() {

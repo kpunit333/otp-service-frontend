@@ -31,7 +31,7 @@ export function TemplateEditor() {
 
   const getPreviewText = (text: string) => {
     return text
-      .replace(/{{app_name}}/g, "OTP Shield")
+      .replace(/{{app_name}}/g, "Orion Security")
       .replace(/{{otp}}/g, "849201")
       .replace(/{{expiry_mins}}/g, "5");
   };

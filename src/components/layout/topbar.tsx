@@ -4,11 +4,13 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Terminal, Activity, ShieldCheck, Zap } from "lucide-react";
+import { Terminal, Activity, ShieldCheck, Zap, PanelLeft } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
+import { useSidebar } from "@/providers/sidebar-provider";
 
 export function Topbar() {
   const pathname = usePathname();
+  const { isCollapsed, toggleSidebar } = useSidebar();
 
   // Compute breadcrumb title based on path
   const getPageTitle = (path: string) => {
@@ -19,7 +21,7 @@ export function Topbar() {
     if (path.startsWith(ROUTES.API_KEYS)) return "API Credentials & Rate Limit Scopes";
     if (path.startsWith(ROUTES.PROVIDERS)) return "Telecom & Email Gateways Failover Topology";
     if (path.startsWith(ROUTES.SETTINGS)) return "Security Thresholds & Webhook Triggers";
-    return "OTP Shield Management Console";
+    return "Orion Security Management Console";
   };
 
   return (
@@ -39,14 +41,27 @@ export function Topbar() {
         zIndex: 10,
       }}
     >
-      {/* Title & Route Context */}
-      <div>
-        <h2 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-main)" }}>
-          {getPageTitle(pathname)}
-        </h2>
-        <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-          Workspace: Default Production Cluster (us-east-1)
-        </span>
+      {/* Title & Route Context with Sidebar Toggle */}
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <button
+          type="button"
+          onClick={toggleSidebar}
+          className="btn-action-icon"
+          title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          style={{ padding: "0.45rem", borderRadius: "var(--radius-sm)" }}
+        >
+          <PanelLeft size={18} />
+        </button>
+
+        <div>
+          <h2 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-main)" }}>
+            {getPageTitle(pathname)}
+          </h2>
+          <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+            Workspace: Default Production Cluster (us-east-1)
+          </span>
+        </div>
       </div>
 
       {/* Quick Action Badges and Simulator Shortcut */}

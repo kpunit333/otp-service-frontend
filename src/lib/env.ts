@@ -17,7 +17,7 @@ export interface AppEnv {
 
 export function getAppEnv(): AppEnv {
   return {
-    appName: process.env.NEXT_PUBLIC_APP_NAME || "OTP Shield",
+    appName: process.env.NEXT_PUBLIC_APP_NAME || "Orion Security",
     appDescription:
       process.env.NEXT_PUBLIC_APP_DESCRIPTION || "Enterprise OTP & Verification Delivery Platform",
     appUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",

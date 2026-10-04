@@ -18,7 +18,7 @@ export default function LogsPage() {
           {
             exportedAt: new Date().toISOString(),
             environment: "production",
-            note: "Audit log exported from OTP Shield ledger.",
+            note: "Audit log exported from Orion Security ledger.",
           },
           null,
           2

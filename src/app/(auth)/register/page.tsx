@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { AuthCard } from "@/features/auth";
 
 export const metadata = {
-  title: "Register Organization | OTP Shield",
+  title: "Register Organization | Orion Security",
   description: "Create a new organization entity and provision API keys",
 };
 

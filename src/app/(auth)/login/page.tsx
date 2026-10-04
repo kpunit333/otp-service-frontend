@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { AuthCard } from "@/features/auth";
 
 export const metadata = {
-  title: "Sign In | OTP Shield",
+  title: "Sign In | Orion Security",
   description: "Sign in to access your OTP verification console",
 };
 

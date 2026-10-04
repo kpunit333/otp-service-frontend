@@ -70,7 +70,7 @@ export function proxy(request: NextRequest) {
 
   response.headers.set("x-request-id", requestId);
   response.headers.set("x-response-time", `${Date.now() - startTime}ms`);
-  response.headers.set("x-powered-by", "OTP Shield Engine");
+  response.headers.set("x-powered-by", "Orion Security Engine");
 
   return response;
 }

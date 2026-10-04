@@ -1,4 +1,4 @@
-# OTP Shield — Enterprise Multi-Channel OTP & Verification Service
+# Orion Security — Enterprise Multi-Channel OTP & Verification Service
 
 An enterprise-ready, scalable, dynamic, and optimized Next.js frontend & API layer for one-time password (OTP) delivery and identity verification across **SMS**, **WhatsApp**, and **Email** channels.
 
