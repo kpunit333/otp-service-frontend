@@ -1,0 +1,38 @@
+{
+  "name": "otp-service-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "dev:dev": "node ./scripts/env-runner.js dev --configuration=development",
+    "dev:development": "node ./scripts/env-runner.js dev --configuration=development",
+    "dev:staging": "node ./scripts/env-runner.js dev --configuration=staging",
+    "dev:production": "node ./scripts/env-runner.js dev --configuration=production",
+    "build": "next build",
+    "build:dev": "node ./scripts/env-runner.js build --configuration=development",
+    "build:development": "node ./scripts/env-runner.js build --configuration=development",
+    "build:staging": "node ./scripts/env-runner.js build --configuration=staging",
+    "build:production": "node ./scripts/env-runner.js build --configuration=production",
+    "start": "next start",
+    "start:dev": "node ./scripts/env-runner.js start --configuration=development",
+    "start:development": "node ./scripts/env-runner.js start --configuration=development",
+    "start:staging": "node ./scripts/env-runner.js start --configuration=staging",
+    "start:production": "node ./scripts/env-runner.js start --configuration=production",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.52.0",
+    "next": "16.3.8",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.8",
+    "typescript": "^5"
+  }
+}
