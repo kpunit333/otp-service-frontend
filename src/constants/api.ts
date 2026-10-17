@@ -27,6 +27,12 @@ export const API_ENDPOINTS = {
     `${BACKEND_BASE_URL}/api/organizations/v1/${encodeURIComponent(orgCode)}/project`,
   ORGANIZATION_PROJECT_DETAIL: (orgCode: string, projectCode: string) =>
     `${BACKEND_BASE_URL}/api/organizations/v1/${encodeURIComponent(orgCode)}/project/${encodeURIComponent(projectCode)}`,
+
+  // Real Purpose Service Endpoints
+  ORGANIZATION_PURPOSES: (orgCode: string) =>
+    `${BACKEND_BASE_URL}/api/organizations/v1/${encodeURIComponent(orgCode)}/purpose`,
+  ORGANIZATION_PURPOSE_DETAIL: (orgCode: string, purposeCode: string) =>
+    `${BACKEND_BASE_URL}/api/organizations/v1/${encodeURIComponent(orgCode)}/purpose/${encodeURIComponent(purposeCode)}`,
 } as const;
 
 export const DEFAULT_TIMEOUT_MS = 10000;

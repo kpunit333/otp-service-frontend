@@ -14,6 +14,7 @@ import {
   Sliders,
   RadioTower,
   FolderKanban,
+  Target,
   MessageSquare,
   ExternalLink,
   LogOut,
@@ -28,6 +29,7 @@ import { useSidebar } from "@/providers/sidebar-provider";
 const navItems = [
   { label: "Overview", href: ROUTES.DASHBOARD, icon: LayoutDashboard },
   { label: "Projects", href: ROUTES.PROJECTS, icon: FolderKanban },
+  { label: "Purposes", href: ROUTES.PURPOSES, icon: Target },
   { label: "Live Simulator", href: ROUTES.SIMULATOR, icon: Terminal, badge: "Interactive" },
   { label: "Delivery Logs", href: ROUTES.LOGS, icon: FileText },
   { label: "Templates", href: ROUTES.TEMPLATES, icon: MessageSquare },

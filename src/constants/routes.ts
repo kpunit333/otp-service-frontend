@@ -10,6 +10,7 @@ export const ROUTES = {
   REGISTER: "/auth?tab=signup",
   DASHBOARD: "/dashboard",
   PROJECTS: "/dashboard/projects",
+  PURPOSES: "/dashboard/purposes",
   SIMULATOR: "/dashboard/simulator",
   LOGS: "/dashboard/logs",
   TEMPLATES: "/dashboard/templates",
