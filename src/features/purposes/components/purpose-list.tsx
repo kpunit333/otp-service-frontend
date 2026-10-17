@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Purpose, CreatePurposePayload, UpdatePurposePayload } from "@/types/purpose";
 import { purposeService } from "../services/purpose-service";
+import { ExpirationDatePicker } from "./expiration-date-picker";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -46,7 +47,6 @@ export function PurposeList() {
     description: "",
     expireAt: null,
   });
-  const [hasCreateExpiration, setHasCreateExpiration] = useState<boolean>(false);
   const [isSubmittingCreate, setIsSubmittingCreate] = useState<boolean>(false);
 
   // Edit Purpose Modal State
@@ -57,7 +57,6 @@ export function PurposeList() {
     description: "",
     expireAt: null,
   });
-  const [hasEditExpiration, setHasEditExpiration] = useState<boolean>(false);
   const [isSubmittingEdit, setIsSubmittingEdit] = useState<boolean>(false);
 
   // View Detail Modal State
@@ -111,7 +110,6 @@ export function PurposeList() {
       description: "",
       expireAt: null,
     });
-    setHasCreateExpiration(false);
     setIsCreateOpen(true);
   };
 
@@ -134,7 +132,7 @@ export function PurposeList() {
       const payload: CreatePurposePayload = {
         name: createForm.name.trim(),
         description: createForm.description?.trim() || "",
-        expireAt: hasCreateExpiration && createForm.expireAt ? createForm.expireAt : null,
+        expireAt: createForm.expireAt || null,
       };
 
       const newPurpose = await purposeService.createPurpose(currentOrg, payload);
@@ -157,7 +155,6 @@ export function PurposeList() {
       description: purpose.description || "",
       expireAt: purpose.expireAt || null,
     });
-    setHasEditExpiration(!!purpose.expireAt);
     setIsEditOpen(true);
   };
 
@@ -177,7 +174,7 @@ export function PurposeList() {
       const payload: UpdatePurposePayload = {
         name: editForm.name.trim(),
         description: editForm.description !== undefined ? editForm.description.trim() : "",
-        expireAt: hasEditExpiration && editForm.expireAt ? editForm.expireAt : null,
+        expireAt: editForm.expireAt || null,
       };
 
       const updated = await purposeService.updatePurpose(currentOrg, editingPurpose.code, payload);
@@ -484,23 +481,33 @@ export function PurposeList() {
                     <TableCell>
                       {purpose.expireAt ? (
                         expired ? (
-                          <Badge variant="danger">
-                            Expired ({formatDate(purpose.expireAt)})
-                          </Badge>
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "2px" }}>
+                            <Badge variant="danger" style={{ minWidth: "120px", justifyContent: "center" }}>
+                              Expired
+                            </Badge>
+                            <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
+                              {formatDate(purpose.expireAt)}
+                            </span>
+                          </div>
                         ) : (
-                          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                            <Badge variant="success">
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "2px" }}>
+                            <Badge variant="success" style={{ minWidth: "120px", justifyContent: "center" }}>
                               Active
                             </Badge>
-                            <span style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                            <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
                               Expires {formatDate(purpose.expireAt)}
                             </span>
                           </div>
                         )
                       ) : (
-                        <Badge variant="neutral">
-                          Permanent
-                        </Badge>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "2px" }}>
+                          <Badge variant="neutral" style={{ minWidth: "120px", justifyContent: "center" }}>
+                            Permanent
+                          </Badge>
+                          <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
+                            Never expires
+                          </span>
+                        </div>
                       )}
                     </TableCell>
 
@@ -555,7 +562,7 @@ export function PurposeList() {
         isOpen={isCreateOpen}
         onClose={() => !isSubmittingCreate && setIsCreateOpen(false)}
         title="Create New Purpose"
-        maxWidth="500px"
+        maxWidth="540px"
       >
         <form onSubmit={handleCreateSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
           <div>
@@ -600,53 +607,12 @@ export function PurposeList() {
             />
           </div>
 
-          {/* Expiration Toggle & Input */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            <label
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={hasCreateExpiration}
-                onChange={(e) => {
-                  setHasCreateExpiration(e.target.checked);
-                  if (!e.target.checked) {
-                    setCreateForm({ ...createForm, expireAt: null });
-                  }
-                }}
-                disabled={isSubmittingCreate}
-                style={{ width: "16px", height: "16px", accentColor: "var(--primary)" }}
-              />
-              Set Purpose Expiration Date
-            </label>
-
-            {hasCreateExpiration && (
-              <div style={{ marginTop: "0.25rem" }}>
-                <Input
-                  type="datetime-local"
-                  value={createForm.expireAt ? createForm.expireAt.slice(0, 16) : ""}
-                  onChange={(e) =>
-                    setCreateForm({
-                      ...createForm,
-                      expireAt: e.target.value ? new Date(e.target.value).toISOString() : null,
-                    })
-                  }
-                  leftIcon={<Calendar size={16} />}
-                  disabled={isSubmittingCreate}
-                />
-                <span style={{ fontSize: "0.725rem", color: "var(--text-muted)", marginTop: "0.25rem", display: "block" }}>
-                  After this date, OTPs cannot be generated or validated with this purpose.
-                </span>
-              </div>
-            )}
-          </div>
+          {/* Purpose Expiration Policy */}
+          {/* <ExpirationDatePicker
+            value={createForm.expireAt}
+            onChange={(val) => setCreateForm({ ...createForm, expireAt: val })}
+            disabled={isSubmittingCreate}
+          /> */}
 
           {/* Modal Actions */}
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "0.5rem" }}>
@@ -674,7 +640,7 @@ export function PurposeList() {
         isOpen={isEditOpen}
         onClose={() => !isSubmittingEdit && setIsEditOpen(false)}
         title={editingPurpose ? `Edit Purpose: ${editingPurpose.name}` : "Edit Purpose"}
-        maxWidth="500px"
+        maxWidth="540px"
       >
         <form onSubmit={handleEditSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
           <div>
@@ -713,50 +679,12 @@ export function PurposeList() {
             />
           </div>
 
-          {/* Expiration Toggle & Input */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            <label
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={hasEditExpiration}
-                onChange={(e) => {
-                  setHasEditExpiration(e.target.checked);
-                  if (!e.target.checked) {
-                    setEditForm({ ...editForm, expireAt: null });
-                  }
-                }}
-                disabled={isSubmittingEdit}
-                style={{ width: "16px", height: "16px", accentColor: "var(--primary)" }}
-              />
-              Set Purpose Expiration Date
-            </label>
-
-            {hasEditExpiration && (
-              <div style={{ marginTop: "0.25rem" }}>
-                <Input
-                  type="datetime-local"
-                  value={editForm.expireAt ? editForm.expireAt.slice(0, 16) : ""}
-                  onChange={(e) =>
-                    setEditForm({
-                      ...editForm,
-                      expireAt: e.target.value ? new Date(e.target.value).toISOString() : null,
-                    })
-                  }
-                  leftIcon={<Calendar size={16} />}
-                  disabled={isSubmittingEdit}
-                />
-              </div>
-            )}
-          </div>
+          {/* Purpose Expiration Policy */}
+          {/* <ExpirationDatePicker
+            value={editForm.expireAt}
+            onChange={(val) => setEditForm({ ...editForm, expireAt: val })}
+            disabled={isSubmittingEdit}
+          /> */}
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "0.5rem" }}>
             <Button
