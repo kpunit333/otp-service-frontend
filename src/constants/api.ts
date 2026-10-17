@@ -1,9 +1,15 @@
+import { env } from "@/environment/env";
+
 /**
  * REST API Endpoint Constants
+ * Purely configured from environment/env.ts with zero .env or proxy dependencies.
  */
 
-export const BACKEND_BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+export const BACKEND_BASE_URL = env.apiBaseUrl
+  ? env.apiBaseUrl.startsWith("http://") || env.apiBaseUrl.startsWith("https://")
+    ? env.apiBaseUrl
+    : `http://${env.apiBaseUrl}`
+  : "";
 
 export const API_ENDPOINTS = {
   HEALTH: "/api/health",
@@ -12,19 +18,15 @@ export const API_ENDPOINTS = {
   OTP_LOGS: "/api/otp/logs",
   KEYS: "/api/keys",
 
-  // Organization & Authentication Service Endpoints (Spring Boot backend on port 5000)
+  // Real Organization & Authentication Service Endpoints
   ORGANIZATION_CREATE: `${BACKEND_BASE_URL}/api/organizations/v1/organization`,
   ORGANIZATION_LOGIN: `${BACKEND_BASE_URL}/api/auth/o/login`,
 
-  // Local Next.js rewrite fallback endpoints to avoid CORS
-  PROXY_ORGANIZATION_CREATE: "/api/organizations/v1/organization",
-  PROXY_ORGANIZATION_LOGIN: "/api/auth/o/login",
-
-  // Project Endpoints (Base URL: http://localhost:5000/api/organizations/v1)
+  // Real Project Service Endpoints
   ORGANIZATION_PROJECTS: (orgCode: string) =>
-    `${BACKEND_BASE_URL}/api/organizations/v1/${orgCode}/project`,
-  PROXY_ORGANIZATION_PROJECTS: (orgCode: string) =>
-    `/api/organizations/v1/${orgCode}/project`,
+    `${BACKEND_BASE_URL}/api/organizations/v1/${encodeURIComponent(orgCode)}/project`,
+  ORGANIZATION_PROJECT_DETAIL: (orgCode: string, projectCode: string) =>
+    `${BACKEND_BASE_URL}/api/organizations/v1/${encodeURIComponent(orgCode)}/project/${encodeURIComponent(projectCode)}`,
 } as const;
 
 export const DEFAULT_TIMEOUT_MS = 10000;

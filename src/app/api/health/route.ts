@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { siteConfig } from "@/config/site";
+import { env } from "@/environment/env";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export async function GET() {
     version: siteConfig.version,
     timestamp: new Date().toISOString(),
     uptime: `${uptimeSeconds}s`,
-    environment: process.env.NODE_ENV || "development",
+    environment: env.appEnv,
     memory: memoryUsage
       ? {
           heapUsedMB: Math.round(memoryUsage.heapUsed / 1024 / 1024),

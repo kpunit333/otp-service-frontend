@@ -5,6 +5,9 @@ import { STORAGE_KEYS } from "@/constants/storage";
 import { authService } from "@/features/auth/services/auth-service";
 
 export interface User {
+  id?: number | string;
+  organizationId?: number | string;
+  organization_id?: number | string;
   code: string;
   name: string;
   email?: string;
@@ -15,8 +18,8 @@ export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (name: string, password: string) => Promise<{ success: boolean; error?: string; message?: string }>;
-  signup: (params: { name: string; password: string }) => Promise<{
+  login: (identifier: string, password: string) => Promise<{ success: boolean; error?: string; message?: string }>;
+  signup: (params: { name: string; email: string; password: string; code?: string }) => Promise<{
     success: boolean;
     organization?: unknown;
     error?: string;
@@ -57,10 +60,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const login = useCallback(async (name: string, password: string) => {
+  const login = useCallback(async (identifier: string, password: string) => {
     setIsLoading(true);
     try {
-      const res = await authService.authenticate({ name, password });
+      const res = await authService.authenticate({ identifier, password });
 
       if (res.success && res.user) {
         setUser(res.user);
@@ -83,7 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const signup = useCallback(async (params: { name: string; password: string }) => {
+  const signup = useCallback(async (params: { name: string; email: string; password: string; code?: string }) => {
     setIsLoading(true);
     try {
       const res = await authService.register(params);

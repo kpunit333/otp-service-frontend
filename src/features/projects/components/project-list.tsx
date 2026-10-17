@@ -30,6 +30,8 @@ import {
   Layers,
   Building2,
   Sparkles,
+  Mail,
+  Lock,
 } from "lucide-react";
 
 export function ProjectList() {
@@ -52,8 +54,10 @@ export function ProjectList() {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const [createForm, setCreateForm] = useState<CreateProjectPayload>({
     name: "",
+    email: "",
+    password: "",
     description: "",
-    status: "Active",
+    // status: "Active",
   });
   const [isSubmittingCreate, setIsSubmittingCreate] = useState<boolean>(false);
 
@@ -71,6 +75,18 @@ export function ProjectList() {
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
   const [deletingProject, setDeletingProject] = useState<Project | null>(null);
   const [isSubmittingDelete, setIsSubmittingDelete] = useState<boolean>(false);
+
+  // Open Create Project Modal helper
+  const handleOpenCreate = () => {
+    setCreateForm({
+      name: "",
+      email: user?.email || "",
+      password: "",
+      description: "",
+      // status: "Active",
+    });
+    setIsCreateOpen(true);
+  };
 
   // Sync orgCode if user updates in session
   useEffect(() => {
@@ -128,18 +144,33 @@ export function ProjectList() {
       showToast("Project name is required.", "warning");
       return;
     }
+    if (!createForm.email.trim()) {
+      showToast("Project email is required.", "warning");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(createForm.email.trim())) {
+      showToast("Please enter a valid email address.", "warning");
+      return;
+    }
+    if (!createForm.password) {
+      showToast("Project password is required.", "warning");
+      return;
+    }
 
     setIsSubmittingCreate(true);
     try {
       const created = await projectService.createProject(currentOrg, {
         name: createForm.name.trim(),
-        description: createForm.description?.trim() || undefined,
-        status: createForm.status || "Active",
+        email: createForm.email.trim(),
+        password: createForm.password,
+        description: createForm.description?.trim() || "",
+        // status: createForm.status || "Active",
       });
 
       showToast(`Project '${created.name || createForm.name}' created successfully`, "success", "Project Provisioned");
       setIsCreateOpen(false);
-      setCreateForm({ name: "", description: "", status: "Active" });
+      setCreateForm({ name: "", email: user?.email || "", password: "", description: "" });
       loadProjects(true);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to create project";
@@ -169,12 +200,12 @@ export function ProjectList() {
         prev.map((item) =>
           item.code === editingProject.code
             ? {
-                ...item,
-                name: editForm.name?.trim() || item.name,
-                description: editForm.description?.trim(),
-                status: editForm.status || item.status,
-                updatedAt: new Date().toISOString(),
-              }
+              ...item,
+              name: editForm.name?.trim() || item.name,
+              description: editForm.description?.trim(),
+              status: editForm.status || item.status,
+              updatedAt: new Date().toISOString(),
+            }
             : item
         )
       );
@@ -215,15 +246,17 @@ export function ProjectList() {
   // Filtered project list
   const filteredProjects = useMemo(() => {
     return projects.filter((item) => {
+      const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
-        searchQuery === "" ||
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+        !q ||
+        (item.name || "").toLowerCase().includes(q) ||
+        (item.code || "").toLowerCase().includes(q) ||
+        (item.email || "").toLowerCase().includes(q) ||
+        (item.description || "").toLowerCase().includes(q);
 
       const matchesStatus =
         statusFilter === "ALL" ||
-        item.status.toUpperCase() === statusFilter.toUpperCase();
+        (item.status || "").toUpperCase() === statusFilter.toUpperCase();
 
       return matchesSearch && matchesStatus;
     });
@@ -234,7 +267,7 @@ export function ProjectList() {
     if (s === "ACTIVE") return <Badge variant="success">Active</Badge>;
     if (s === "INACTIVE") return <Badge variant="warning">Inactive</Badge>;
     if (s === "SUSPENDED" || s === "REVOKED") return <Badge variant="danger">{status}</Badge>;
-    return <Badge variant="neutral">{status || "Unknown"}</Badge>;
+    return <Badge variant="neutral">{status || "Active"}</Badge>;
   };
 
   return (
@@ -291,17 +324,16 @@ export function ProjectList() {
             size="sm"
             onClick={() => loadProjects(true)}
             disabled={isRefreshing}
-            leftIcon={<RefreshCw size={14} className={isRefreshing ? "animate-spin" : ""} />}
             title="Reload from API"
           >
-            Refresh
+            <RefreshCw size={14} className={isRefreshing ? "animate-spin" : ""} />
           </Button>
 
           {/* Create Project Button */}
           <Button
             variant="primary"
             size="sm"
-            onClick={() => setIsCreateOpen(true)}
+            onClick={handleOpenCreate}
             leftIcon={<Plus size={16} />}
           >
             New Project
@@ -313,34 +345,12 @@ export function ProjectList() {
       <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
         <div style={{ position: "relative", flex: 1, minWidth: "260px" }}>
           <Input
-            placeholder="Search by project name, code, or description..."
+            placeholder="Search by project name, code, email, or description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             leftIcon={<Search size={16} color="var(--text-muted)" />}
           />
         </div>
-
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          style={{
-            height: "40px",
-            padding: "0 1rem",
-            borderRadius: "var(--radius-md)",
-            backgroundColor: "var(--bg-surface)",
-            border: "1px solid var(--border-medium)",
-            color: "var(--text-main)",
-            fontSize: "0.875rem",
-            fontFamily: "var(--font-sans)",
-            outline: "none",
-            cursor: "pointer",
-          }}
-        >
-          <option value="ALL">All Statuses</option>
-          <option value="ACTIVE">Active</option>
-          <option value="INACTIVE">Inactive</option>
-          <option value="SUSPENDED">Suspended</option>
-        </select>
       </div>
 
       {/* Projects Table */}
@@ -348,12 +358,13 @@ export function ProjectList() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableHeader style={{ width: "14%" }}>Project Name</TableHeader>
+              {/* <TableHeader style={{ width: "22%" }}>Project & Contact</TableHeader> */}
+              <TableHeader style={{ width: "22%" }}>Project</TableHeader>
               <TableHeader style={{ width: "15%" }}>Project Code</TableHeader>
-              <TableHeader style={{ width: "20%" }}>Secret Key</TableHeader>
+              <TableHeader style={{ width: "18%" }}>Secret Key</TableHeader>
               <TableHeader style={{ width: "10%" }}>Status</TableHeader>
-              <TableHeader style={{ width: "22%" }}>Description</TableHeader>
-              <TableHeader style={{ width: "13%", whiteSpace: "nowrap" }}>Created Date</TableHeader>
+              <TableHeader style={{ width: "18%" }}>Description</TableHeader>
+              <TableHeader style={{ width: "11%", whiteSpace: "nowrap" }}>Created Date</TableHeader>
               <TableHeader style={{ width: "6%", textAlign: "right" }}>Actions</TableHeader>
             </TableRow>
           </TableHead>
@@ -398,7 +409,7 @@ export function ProjectList() {
                     {!searchQuery && (
                       <button
                         type="button"
-                        onClick={() => setIsCreateOpen(true)}
+                        onClick={handleOpenCreate}
                         className="create-first-project-btn"
                         style={{ marginTop: "0.75rem" }}
                         title="Provision a new project in your organization"
@@ -412,17 +423,26 @@ export function ProjectList() {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredProjects.map((project) => {
-                const isSecretRevealed = !!revealedSecrets[project.code];
-                const secretValue = project.secretKey || "sec_live_default_key_placeholder";
+              filteredProjects.map((project, index) => {
+                const projectKey = project.code || `project-${index}`;
+                const isSecretRevealed = !!revealedSecrets[projectKey];
+                const secretValue = project.secretKey || "—";
 
                 return (
-                  <TableRow key={project.code}>
-                    {/* Project Name */}
+                  <TableRow key={projectKey}>
+                    {/* Project Name & Contact Email */}
                     <TableCell>
-                      <span style={{ fontWeight: 700, color: "var(--text-main)", fontSize: "0.925rem" }}>
-                        {project.name}
-                      </span>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                        <span style={{ fontWeight: 700, color: "var(--text-main)", fontSize: "0.925rem" }}>
+                          {project.name || "Untitled Project"}
+                        </span>
+                        {project.email ? (
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "0.75rem", color: "var(--text-secondary)" }}>
+                            {/* <Mail size={12} color="var(--primary-light)" style={{ flexShrink: 0 }} /> */}
+                            <span style={{ wordBreak: "break-all" }}>{project.email}</span>
+                          </div>
+                        ) : null}
+                      </div>
                     </TableCell>
 
                     {/* Project Code */}
@@ -440,21 +460,23 @@ export function ProjectList() {
                             fontWeight: 600,
                           }}
                         >
-                          {project.code}
+                          {project.code || "—"}
                         </code>
-                        <button
-                          type="button"
-                          onClick={() => copy(project.code, `code-${project.code}`)}
-                          title="Copy project code"
-                          className="btn-action-icon"
-                          style={{ padding: "3px 5px" }}
-                        >
-                          {isCopied(`code-${project.code}`) ? (
-                            <Check size={12} color="var(--accent-emerald)" />
-                          ) : (
-                            <Copy size={12} />
-                          )}
-                        </button>
+                        {project.code ? (
+                          <button
+                            type="button"
+                            onClick={() => copy(project.code, `code-${project.code}`)}
+                            title="Copy project code"
+                            className="btn-action-icon"
+                            style={{ padding: "3px 5px" }}
+                          >
+                            {isCopied(`code-${project.code}`) ? (
+                              <Check size={12} color="var(--accent-emerald)" />
+                            ) : (
+                              <Copy size={12} />
+                            )}
+                          </button>
+                        ) : null}
                       </div>
                     </TableCell>
 
@@ -478,28 +500,34 @@ export function ProjectList() {
                         >
                           {isSecretRevealed ? secretValue : "••••••••••••••••••••"}
                         </code>
-                        <button
-                          type="button"
-                          onClick={() => toggleSecretVisibility(project.code)}
-                          title={isSecretRevealed ? "Hide secret key" : "Reveal secret key"}
-                          className="btn-action-icon"
-                          style={{ padding: "5px" }}
-                        >
-                          {isSecretRevealed ? <EyeOff size={14} /> : <Eye size={14} />}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => copy(secretValue, `secret-${project.code}`)}
-                          title="Copy secret key to clipboard"
-                          className="btn-action-icon"
-                          style={{ padding: "5px" }}
-                        >
-                          {isCopied(`secret-${project.code}`) ? (
-                            <Check size={14} color="var(--accent-emerald)" />
-                          ) : (
-                            <Copy size={14} />
-                          )}
-                        </button>
+                        {project.secretKey ? (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => toggleSecretVisibility(projectKey)}
+                              title={isSecretRevealed ? "Hide secret key" : "Reveal secret key"}
+                              className="btn-action-icon"
+                              style={{ padding: "5px" }}
+                            >
+                              {isSecretRevealed ? <EyeOff size={14} /> : <Eye size={14} />}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => copy(secretValue, `secret-${projectKey}`)}
+                              title="Copy secret key to clipboard"
+                              className="btn-action-icon"
+                              style={{ padding: "5px" }}
+                            >
+                              {isCopied(`secret-${projectKey}`) ? (
+                                <Check size={14} color="var(--accent-emerald)" />
+                              ) : (
+                                <Copy size={14} />
+                              )}
+                            </button>
+                          </>
+                        ) : (
+                          <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>None</span>
+                        )}
                       </div>
                     </TableCell>
 
@@ -597,6 +625,37 @@ export function ProjectList() {
               placeholder="e.g. Mobile Banking App, Checkout Service"
               value={createForm.name}
               onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
+              leftIcon={<FolderKanban size={16} />}
+            />
+          </div>
+
+          <div>
+            <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "0.5rem", display: "block" }}>
+              Project Admin Email *
+            </label>
+            <Input
+              required
+              type="email"
+              placeholder="e.g. project-admin@company.com"
+              value={createForm.email}
+              onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
+              leftIcon={<Mail size={16} />}
+              helperText="Administrative contact for project alerts"
+            />
+          </div>
+
+          <div>
+            <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "0.5rem", display: "block" }}>
+              Project Password *
+            </label>
+            <Input
+              required
+              type="password"
+              placeholder="Create secure project password"
+              value={createForm.password}
+              onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
+              leftIcon={<Lock size={16} />}
+              helperText="Credentials for project verification and authentication"
             />
           </div>
 
@@ -624,7 +683,7 @@ export function ProjectList() {
             />
           </div>
 
-          <div>
+          {/* <div>
             <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "0.5rem", display: "block" }}>
               Initial Status
             </label>
@@ -647,7 +706,7 @@ export function ProjectList() {
               <option value="Active">Active (Provisioning Secret Key)</option>
               <option value="Inactive">Inactive (Suspended)</option>
             </select>
-          </div>
+          </div> */}
 
           <div style={{ display: "flex", gap: "0.75rem", justifyContent: "flex-end", marginTop: "0.5rem" }}>
             <Button

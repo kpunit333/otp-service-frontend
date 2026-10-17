@@ -2,12 +2,13 @@
  * Global Site Configuration & Metadata
  */
 
+import { env } from "@/environment/env";
+
 export const siteConfig = {
-  name: "Orion Security",
+  name: env.appName,
   shortName: "OrionSecurity",
-  description:
-    "Ultra-reliable, high-throughput OTP verification platform with multi-channel routing (SMS, WhatsApp, Email) and instant failover.",
-  url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  description: env.appDescription,
+  url: env.appUrl,
   ogImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&h=630&fit=crop",
   links: {
     github: "https://github.com/kpunit333/otp-service-frontend",

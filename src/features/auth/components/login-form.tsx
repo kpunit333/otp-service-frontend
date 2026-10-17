@@ -6,32 +6,35 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/providers/auth-provider";
 import { useToast } from "@/providers/toast-provider";
 import { ROUTES } from "@/constants/routes";
-import { Building2, Lock, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
+import { Building2, Lock, ArrowRight, AlertCircle, Loader2, Mail } from "lucide-react";
 
 interface LoginFormProps {
   onSuccess?: () => void;
   onSwitchToSignup?: () => void;
+  initialIdentifier?: string;
   initialName?: string;
   redirectTo?: string;
 }
 
-export function LoginForm({ onSuccess, onSwitchToSignup, initialName = "", redirectTo }: LoginFormProps) {
+export function LoginForm({ onSuccess, onSwitchToSignup, initialIdentifier = "", initialName = "", redirectTo }: LoginFormProps) {
   const router = useRouter();
   const { login } = useAuth();
   const { showToast } = useToast();
 
-  const [name, setName] = useState(initialName || "");
+  const [identifier, setIdentifier] = useState(initialIdentifier || initialName || "");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
+
+  const isEmailInput = identifier.includes("@");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setApiErrorMessage(null);
 
-    if (!name.trim()) {
-      setApiErrorMessage("Organization Name or Code is required.");
-      showToast("Please enter your organization name or code", "warning");
+    if (!identifier.trim()) {
+      setApiErrorMessage("Organization Code or Email is required.");
+      showToast("Please enter your organization code or email", "warning");
       return;
     }
 
@@ -43,7 +46,7 @@ export function LoginForm({ onSuccess, onSwitchToSignup, initialName = "", redir
 
     setIsSubmitting(true);
     try {
-      const res = await login(name.trim(), password);
+      const res = await login(identifier.trim(), password);
 
       if (res.success) {
         showToast(res.message || "Organization login successful!", "success", "Authenticated");
@@ -96,15 +99,16 @@ export function LoginForm({ onSuccess, onSwitchToSignup, initialName = "", redir
       )}
 
       <Input
-        label="Organization Name or Code"
+        label="Organization Code or Email"
         type="text"
-        placeholder="e.g. Acme Corp or ORG04A..."
-        value={name}
+        placeholder="e.g. ORG04A9B... or admin@company.com"
+        value={identifier}
         onChange={(e) => {
-          setName(e.target.value);
+          setIdentifier(e.target.value);
           if (apiErrorMessage) setApiErrorMessage(null);
         }}
-        leftIcon={<Building2 size={16} />}
+        leftIcon={isEmailInput ? <Mail size={16} /> : <Building2 size={16} />}
+        helperText={isEmailInput ? "Detected email sign in" : "Sign in with your Organization Code or Email"}
         required
       />
 

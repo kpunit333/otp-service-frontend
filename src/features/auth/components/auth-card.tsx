@@ -107,6 +107,7 @@ export function AuthCard({ defaultTab = "login", onSuccess }: AuthCardProps) {
         {activeTab === "login" ? (
           <LoginForm
             key={prefilledCode || "default-login"}
+            initialIdentifier={prefilledCode}
             initialName={prefilledCode}
             redirectTo={redirectParam}
             onSuccess={onSuccess}

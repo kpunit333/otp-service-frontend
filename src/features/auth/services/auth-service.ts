@@ -1,6 +1,7 @@
 import {
   LoginFormData,
   SignupFormData,
+  OrganizationLoginRequest,
   OrganizationLoginResponse,
   OrganizationCreateResponse,
 } from "../types/auth";
@@ -9,21 +10,24 @@ import { API_ENDPOINTS } from "@/constants/api";
 
 export const authService = {
   /**
-   * Authenticate Organization via POST http://localhost:5000/api/auth/o/login
-   * Handles error responses gracefully and returns exact API message
+   * Authenticate Organization via real API server using Code or Email
    */
   async authenticate(
     data: LoginFormData
   ): Promise<{ success: boolean; user?: User; token?: string; error?: string; message?: string }> {
-    const payload = {
-      name: data.name.trim(),
-      code: data.name.trim(),
+    const rawIdentifier = (data.identifier || data.name || "").trim();
+    const isEmail = rawIdentifier.includes("@");
+
+    // Exact login payload required by organization service:
+    // { "code": "", "email": "", "password": "" }
+    const payload: OrganizationLoginRequest = {
+      code: isEmail ? "" : rawIdentifier,
+      email: isEmail ? rawIdentifier : "",
       password: data.password,
     };
 
-    // Helper to execute fetch with JSON error extraction
-    const tryFetch = async (url: string) => {
-      const res = await fetch(url, {
+    try {
+      const res = await fetch(API_ENDPOINTS.ORGANIZATION_LOGIN, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,42 +50,36 @@ export const authService = {
         };
       }
 
-      return { status: res.status, ok: res.ok, body: resJson };
-    };
-
-    try {
-      let result;
-      try {
-        // Try direct backend endpoint first
-        result = await tryFetch(API_ENDPOINTS.ORGANIZATION_LOGIN);
-      } catch (directErr) {
-        console.warn("Direct backend fetch failed (likely CORS or network), trying proxy rewrite:", directErr);
-        // Fallback to same-origin Next.js rewrite
-        result = await tryFetch(API_ENDPOINTS.PROXY_ORGANIZATION_LOGIN);
-      }
-
-      const { ok, body } = result;
-
-      // Check if backend signaled failure
-      if (!ok || body.success === false) {
+      if (!res.ok || resJson.success === false) {
         const errorMessage =
-          body.message ||
-          (typeof body === "string" ? body : "Invalid organization code or password");
+          resJson.message ||
+          (typeof resJson === "string" ? resJson : "Invalid organization code, email, or password");
         return {
           success: false,
           error: errorMessage,
         };
       }
 
-      // Success! Extract user details and tokens
-      const accessToken = body.data?.accessToken;
-      const rawUser = body.data?.user || (body.data as unknown as Record<string, unknown>) || (body as unknown as Record<string, unknown>);
-      const orgName = (rawUser as { name?: string })?.name || data.name;
-      const orgCode = (rawUser as { code?: string })?.code || data.name;
+      const accessToken = resJson.data?.accessToken || resJson.data?.token;
+      const rawUser =
+        resJson.data?.user ||
+        (resJson.data as unknown as Record<string, unknown>) ||
+        (resJson as unknown as Record<string, unknown>);
+      const orgId =
+        (rawUser as { organization_id?: number | string })?.organization_id ||
+        (rawUser as { organizationId?: number | string })?.organizationId ||
+        (rawUser as { id?: number | string })?.id ||
+        resJson.data?.organization_id ||
+        resJson.data?.organizationId;
+      const orgName = (rawUser as { name?: string })?.name || rawIdentifier;
+      const orgCode = (rawUser as { code?: string })?.code || (!isEmail ? rawIdentifier : "");
       const orgStatus = (rawUser as { status?: string })?.status || "Active";
-      const orgEmail = (rawUser as { email?: string })?.email;
+      const orgEmail = (rawUser as { email?: string })?.email || (isEmail ? rawIdentifier : undefined);
 
       const user: User = {
+        id: orgId,
+        organizationId: orgId,
+        organization_id: orgId,
         code: orgCode,
         name: orgName,
         email: orgEmail,
@@ -92,19 +90,22 @@ export const authService = {
         success: true,
         user,
         token: accessToken,
-        message: body.message || "Organization login successful",
+        message: resJson.message || "Organization login successful",
       };
     } catch (err: unknown) {
       console.error("AuthService login error:", err);
       return {
         success: false,
-        error: err instanceof Error ? err.message : "Unable to connect to authentication service. Please check your network.",
+        error:
+          err instanceof Error
+            ? err.message
+            : "Unable to connect to authentication server. Please check your network.",
       };
     }
   },
 
   /**
-   * Create new organization entity via POST http://localhost:5000/api/organizations/v1/organization
+   * Create new organization entity via real API server (requires name, email, password)
    */
   async register(
     data: SignupFormData
@@ -115,13 +116,17 @@ export const authService = {
     error?: string;
     message?: string;
   }> {
-    const payload = {
+    const payload: Record<string, string> = {
       name: data.name.trim(),
+      email: data.email.trim(),
       password: data.password,
     };
+    if (data.code?.trim()) {
+      payload.code = data.code.trim();
+    }
 
-    const tryFetch = async (url: string) => {
-      const res = await fetch(url, {
+    try {
+      const res = await fetch(API_ENDPOINTS.ORGANIZATION_CREATE, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -144,54 +149,42 @@ export const authService = {
         };
       }
 
-      return { status: res.status, ok: res.ok, body: resJson };
-    };
-
-    try {
-      let result;
-      try {
-        result = await tryFetch(API_ENDPOINTS.ORGANIZATION_CREATE);
-      } catch (directErr) {
-        console.warn("Direct organization creation failed, trying proxy rewrite:", directErr);
-        result = await tryFetch(API_ENDPOINTS.PROXY_ORGANIZATION_CREATE);
-      }
-
-      const { ok, body } = result;
-
-      if (!ok || body.success === false) {
+      if (!res.ok || resJson.success === false) {
         const errorMessage =
-          body.message ||
-          (typeof body === "string" ? body : "Failed to create organization entity");
+          resJson.message ||
+          (typeof resJson === "string" ? resJson : "Failed to create organization entity");
         return {
           success: false,
           error: errorMessage,
         };
       }
 
-      const orgData = body.data;
-      const orgName = orgData?.name || (body as unknown as { name?: string })?.name || data.name;
-      const orgCode = orgData?.code || (body as unknown as { code?: string })?.code || "";
-      const orgStatus = orgData?.status || (body as unknown as { status?: string })?.status || "Active";
-      const orgEmail = (orgData as { email?: string })?.email || (body as unknown as { email?: string })?.email;
+      const orgData = resJson.data;
+      const orgId =
+        (orgData as { organization_id?: number | string })?.organization_id ||
+        (orgData as { organizationId?: number | string })?.organizationId ||
+        (orgData as { id?: number | string })?.id ||
+        (resJson as unknown as { organization_id?: number | string })?.organization_id;
+      const orgName = orgData?.name || (resJson as unknown as { name?: string })?.name || data.name;
+      const orgCode = orgData?.code || (resJson as unknown as { code?: string })?.code || "";
+      const orgStatus = orgData?.status || (resJson as unknown as { status?: string })?.status || "Active";
+      const orgEmail = (orgData as { email?: string })?.email || (resJson as unknown as { email?: string })?.email || data.email;
 
       const user: User = {
+        id: orgId,
+        organizationId: orgId,
+        organization_id: orgId,
         code: orgCode,
         name: orgName,
         email: orgEmail,
         status: orgStatus,
       };
 
-      const finalOrgData = orgData || {
-        name: orgName,
-        code: orgCode,
-        status: orgStatus,
-      };
-
       return {
         success: true,
-        organization: finalOrgData,
+        organization: orgData || { name: orgName, code: orgCode, email: orgEmail, status: orgStatus },
         user,
-        message: body.message || "Organization created successfully",
+        message: resJson.message || "Organization created successfully",
       };
     } catch (err: unknown) {
       console.error("AuthService register error:", err);
@@ -200,7 +193,7 @@ export const authService = {
         error:
           err instanceof Error
             ? err.message
-            : "Unable to connect to organization service. Please check your network.",
+            : "Unable to connect to organization server. Please check your network.",
       };
     }
   },

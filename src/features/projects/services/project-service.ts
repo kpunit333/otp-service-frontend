@@ -1,15 +1,9 @@
-import { BACKEND_BASE_URL } from "@/constants/api";
+import { API_ENDPOINTS } from "@/constants/api";
 import { STORAGE_KEYS } from "@/constants/storage";
 import { Project, CreateProjectPayload, UpdateProjectPayload } from "@/types/project";
 
 /**
- * Service for communicating with the Organization Project Service API
- * Endpoints:
- *   POST   http://localhost:5000/api/organizations/v1/{organizationCode}/project
- *   GET    http://localhost:5000/api/organizations/v1/{organizationCode}/project
- *   GET    http://localhost:5000/api/organizations/v1/{organizationCode}/project/{projectCode}
- *   PATCH  http://localhost:5000/api/organizations/v1/{organizationCode}/project/{projectCode}
- *   DELETE http://localhost:5000/api/organizations/v1/{organizationCode}/project/{projectCode}
+ * Service for communicating with the Organization Project Service API on the real API server
  */
 class ProjectService {
   private getAuthHeaders(): HeadersInit {
@@ -29,28 +23,15 @@ class ProjectService {
   }
 
   private async request<T>(
-    endpointPath: string,
+    url: string,
     options: RequestInit = {}
   ): Promise<T> {
-    const directUrl = `${BACKEND_BASE_URL}${endpointPath}`;
-    const proxyUrl = endpointPath;
     const headers = { ...this.getAuthHeaders(), ...options.headers };
 
-    let response: Response;
-
-    try {
-      // 1. Try direct backend request (e.g. http://localhost:5000/api/organizations/v1/...)
-      response = await fetch(directUrl, {
-        ...options,
-        headers,
-      });
-    } catch {
-      // 2. Fallback to same-origin proxy rewrite (/api/organizations/v1/...) to avoid CORS
-      response = await fetch(proxyUrl, {
-        ...options,
-        headers,
-      });
-    }
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
 
     const contentType = response.headers.get("content-type") || "";
     let parsedData: unknown = null;
@@ -85,87 +66,78 @@ class ProjectService {
   }
 
   /**
-   * GET http://localhost:5000/api/organizations/v1/{organizationCode}/project
-   * Retrieves all projects belonging to the specified organization
+   * Retrieves all projects belonging to the specified organization from real API server
    */
   async getProjects(organizationCode: string): Promise<Project[]> {
     if (!organizationCode) return [];
-    const data = await this.request<Project[] | { projects?: Project[] }>(
-      `/api/organizations/v1/${encodeURIComponent(organizationCode)}/project`,
-      { method: "GET" }
-    );
+    const url = API_ENDPOINTS.ORGANIZATION_PROJECTS(organizationCode);
+    const res = await this.request<unknown>(url, { method: "GET" });
 
-    if (Array.isArray(data)) {
-      return data;
-    }
-
-    if (data && typeof data === "object" && "projects" in data && Array.isArray(data.projects)) {
-      return data.projects;
-    }
-
-    return [];
-  }
-
-  /**
-   * GET http://localhost:5000/api/organizations/v1/{organizationCode}/project/{projectCode}
-   * Retrieves specific project data
-   */
-  async getProject(organizationCode: string, projectCode: string): Promise<Project> {
-    return this.request<Project>(
-      `/api/organizations/v1/${encodeURIComponent(organizationCode)}/project/${encodeURIComponent(projectCode)}`,
-      { method: "GET" }
-    );
-  }
-
-  /**
-   * POST http://localhost:5000/api/organizations/v1/{organizationCode}/project
-   * Creates a new project in the specified organization
-   */
-  async createProject(
-    organizationCode: string,
-    payload: CreateProjectPayload
-  ): Promise<Project> {
-    return this.request<Project>(
-      `/api/organizations/v1/${encodeURIComponent(organizationCode)}/project`,
-      {
-        method: "POST",
-        body: JSON.stringify(payload),
+    let rawList: unknown[] = [];
+    if (Array.isArray(res)) {
+      rawList = res;
+    } else if (typeof res === "object" && res !== null) {
+      const record = res as Record<string, unknown>;
+      if (Array.isArray(record.data)) {
+        rawList = record.data;
+      } else if (Array.isArray(record.projects)) {
+        rawList = record.projects;
       }
-    );
+    }
+
+    return rawList.map((item) => {
+      const p = (typeof item === "object" && item !== null ? item : {}) as Record<string, unknown>;
+      return {
+        code: String(p.code || ""),
+        name: String(p.name || ""),
+        email: String(p.email || ""),
+        secretKey: String(p.secretKey || ""),
+        status: String(p.status || "Active"),
+        description: p.description ? String(p.description) : "",
+        createdAt: String(p.createdAt || new Date().toISOString()),
+        expireAt: p.expireAt ? String(p.expireAt) : undefined,
+      };
+    });
   }
 
   /**
-   * PATCH http://localhost:5000/api/organizations/v1/{organizationCode}/project/{projectCode}
-   * Updates an existing project
+   * Creates a new project entity on real API server
+   */
+  async createProject(organizationCode: string, payload: CreateProjectPayload): Promise<Project> {
+    const url = API_ENDPOINTS.ORGANIZATION_PROJECTS(organizationCode);
+    const body = {
+      name: payload.name.trim(),
+      password: payload.password,
+      email: payload.email.trim(),
+      description: payload.description ? payload.description.trim() : "",
+    };
+    return this.request<Project>(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+  }
+
+  /**
+   * Updates an existing project entity on real API server
    */
   async updateProject(
     organizationCode: string,
     projectCode: string,
     payload: UpdateProjectPayload
   ): Promise<Project> {
-    return this.request<Project>(
-      `/api/organizations/v1/${encodeURIComponent(organizationCode)}/project/${encodeURIComponent(projectCode)}`,
-      {
-        method: "PATCH",
-        body: JSON.stringify(payload),
-      }
-    );
+    const url = API_ENDPOINTS.ORGANIZATION_PROJECT_DETAIL(organizationCode, projectCode);
+    return this.request<Project>(url, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
   }
 
   /**
-   * DELETE http://localhost:5000/api/organizations/v1/{organizationCode}/project/{projectCode}
-   * Deletes a project from the specified organization
+   * Deletes a project entity on real API server
    */
-  async deleteProject(
-    organizationCode: string,
-    projectCode: string
-  ): Promise<void> {
-    await this.request<void>(
-      `/api/organizations/v1/${encodeURIComponent(organizationCode)}/project/${encodeURIComponent(projectCode)}`,
-      {
-        method: "DELETE",
-      }
-    );
+  async deleteProject(organizationCode: string, projectCode: string): Promise<void> {
+    const url = API_ENDPOINTS.ORGANIZATION_PROJECT_DETAIL(organizationCode, projectCode);
+    await this.request(url, { method: "DELETE" });
   }
 }
 

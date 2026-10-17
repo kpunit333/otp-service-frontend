@@ -288,20 +288,6 @@ export function Sidebar() {
               >
                 {(user?.code ? user.code.slice(0, 3) : (user?.name || "ORG").slice(0, 3)).toUpperCase()}
               </div>
-              <span
-                style={{
-                  position: "absolute",
-                  bottom: "-1px",
-                  right: "-1px",
-                  width: "8px",
-                  height: "8px",
-                  borderRadius: "50%",
-                  backgroundColor: user?.status === "Active" || !user?.status ? "var(--accent-emerald)" : "var(--accent-amber)",
-                  boxShadow: "0 0 6px var(--accent-emerald)",
-                  border: "1.5px solid var(--surface-card)",
-                }}
-                title={`Status: ${user?.status || "Active"}`}
-              />
             </div>
 
             {/* Sign Out Button Icon */}
@@ -352,39 +338,11 @@ export function Sidebar() {
                 >
                   {(user?.code ? user.code.slice(0, 3) : (user?.name || "ORG").slice(0, 3)).toUpperCase()}
                 </div>
-                <span
-                  style={{
-                    position: "absolute",
-                    bottom: "-1px",
-                    right: "-1px",
-                    width: "8px",
-                    height: "8px",
-                    borderRadius: "50%",
-                    backgroundColor: user?.status === "Active" || !user?.status ? "var(--accent-emerald)" : "var(--accent-amber)",
-                    boxShadow: "0 0 6px var(--accent-emerald)",
-                    border: "1.5px solid var(--surface-card)",
-                  }}
-                  title={`Status: ${user?.status || "Active"}`}
-                />
               </div>
               <div style={{ overflow: "hidden", display: "flex", flexDirection: "column", gap: "2px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
                   <span style={{ fontSize: "0.825rem", fontWeight: 700, color: "var(--text-main)", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
                     {user?.name || "Organization"}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "0.625rem",
-                      padding: "1px 5px",
-                      borderRadius: "4px",
-                      backgroundColor: "rgba(16, 185, 129, 0.12)",
-                      color: "var(--accent-emerald)",
-                      border: "1px solid rgba(16, 185, 129, 0.25)",
-                      fontWeight: 600,
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {user?.status || "Active"}
                   </span>
                 </div>
                 <div
@@ -397,9 +355,9 @@ export function Sidebar() {
                     overflow: "hidden",
                     letterSpacing: "0.02em",
                   }}
-                  title={user?.code ? `Code: ${user.code}` : ""}
+                  title={user?.email ? `Email: ${user.email} | Code: ${user.code || "—"}` : user?.code ? `Code: ${user.code}` : ""}
                 >
-                  {user?.code || "—"}
+                  {user?.email || user?.code || "—"}
                 </div>
               </div>
             </div>

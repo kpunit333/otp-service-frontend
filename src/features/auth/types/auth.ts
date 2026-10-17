@@ -1,23 +1,31 @@
 export type AuthMode = "login" | "signup";
 
 export interface OrganizationLoginRequest {
-  name?: string;
-  code?: string;
+  code: string;
+  email: string;
   password: string;
 }
 
 export interface OrganizationCreateRequest {
   name: string;
+  email: string;
   password: string;
+  code?: string;
 }
 
 export interface OrganizationCreateResponse {
   data: {
+    organization_id?: number | string;
+    organizationId?: number | string;
     id?: number | string;
     name: string;
     code: string;
+    email?: string;
     status: string;
+    created_at?: string;
     createdAt?: string;
+    expire_at?: string;
+    expiry_at?: string;
   } | null;
   message: string;
   success: boolean;
@@ -27,12 +35,19 @@ export interface OrganizationCreateResponse {
 export interface OrganizationLoginResponse {
   data: {
     accessToken?: string;
+    token?: string;
     refreshToken?: string;
     tokenType?: string;
     expiresIn?: number;
+    organization_id?: number | string;
+    organizationId?: number | string;
     user?: {
+      organization_id?: number | string;
+      organizationId?: number | string;
+      id?: number | string;
       name: string;
       code: string;
+      email?: string;
       status: string;
     };
     [key: string]: unknown;
@@ -43,12 +58,16 @@ export interface OrganizationLoginResponse {
 }
 
 export interface LoginFormData {
-  name: string; // Organization code or name
+  identifier?: string; // Organization code or email
+  name?: string; // Backward compatibility alias
   password: string;
 }
 
 export interface SignupFormData {
   name: string;
+  email: string;
   password: string;
   confirmPassword?: string;
+  code?: string;
 }
+
