@@ -10,4 +10,5 @@ export const env: AppEnv = {
   otpExpirySeconds: 300,
   otpCodeLength: 6,
   otpMaxAttempts: 3,
+  otpResendCooldownSeconds: 120, // 2 minutes resend counter
 };

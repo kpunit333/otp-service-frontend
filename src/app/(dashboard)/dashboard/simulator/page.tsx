@@ -51,7 +51,7 @@ export default function SimulatorPage() {
               </li>
               <li style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
                 <span style={{ color: "var(--accent-emerald)", fontWeight: 700 }}>✓</span>
-                <span><strong>Anti-Spam Cooldown:</strong> 45-second lock on successive dispatches per recipient.</span>
+                <span><strong>Anti-Spam Cooldown:</strong> 2-minute (120s) configurable cooldown on successive dispatches per recipient.</span>
               </li>
             </ul>
           </CardContent>
@@ -63,7 +63,7 @@ export default function SimulatorPage() {
               <Zap size={18} color="var(--accent-cyan)" />
               <CardTitle>Direct cURL Testing</CardTitle>
             </div>
-            <CardDescription>Execute directly against local API routes</CardDescription>
+            <CardDescription>Execute directly against test endpoints</CardDescription>
           </CardHeader>
           <CardContent>
             <div
@@ -77,9 +77,14 @@ export default function SimulatorPage() {
                 lineHeight: 1.5,
               }}
             >
-              curl -X POST http://localhost:3000/api/otp/send \<br />
+              <strong># 1. Generate:</strong><br />
+              curl -X POST http://localhost:5000/api/otp/v1/test/generate \<br />
               &nbsp;&nbsp;-H &quot;Content-Type: application/json&quot; \<br />
-              &nbsp;&nbsp;-d &apos;&#123;&quot;recipient&quot;: &quot;+15552348901&quot;, &quot;channel&quot;: &quot;sms&quot;&#125;&apos;
+              &nbsp;&nbsp;-d &apos;&#123;&quot;secretKey&quot;: &quot;&lt;PROJECT_KEY&gt;&quot;, &quot;purposeId&quot;: &quot;&lt;PURPOSE_ID&gt;&quot;, &quot;userId&quot;: &quot;+15552348901&quot;, &quot;channel&quot;: [&quot;WHATSAPP&quot;, &quot;EMAIL&quot;, &quot;SMS&quot;]&#125;&apos;<br /><br />
+              <strong># 2. Verify:</strong><br />
+              curl -X POST http://localhost:5000/api/otp/v1/test/verify \<br />
+              &nbsp;&nbsp;-H &quot;Content-Type: application/json&quot; \<br />
+              &nbsp;&nbsp;-d &apos;&#123;&quot;secretKey&quot;: &quot;&lt;PROJECT_KEY&gt;&quot;, &quot;userId&quot;: &quot;+15552348901&quot;, &quot;code&quot;: &quot;123456&quot;&#125;&apos;
             </div>
           </CardContent>
         </Card>

@@ -26,7 +26,9 @@ import {
   Calendar,
   Info,
   Building2,
+  Zap,
 } from "lucide-react";
+import Link from "next/link";
 
 export function PurposeList() {
   const { user } = useAuth();
@@ -521,6 +523,15 @@ export function PurposeList() {
                     {/* Actions */}
                     <TableCell style={{ textAlign: "right" }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "0.35rem" }}>
+                        <Link
+                          href={`/dashboard/simulator?purposeId=${encodeURIComponent(purpose.code)}`}
+                          title="Test OTP with this purpose ID"
+                          className="btn-action-icon"
+                          style={{ padding: "6px", color: "var(--accent-cyan)" }}
+                        >
+                          <Zap size={16} />
+                        </Link>
+
                         <button
                           onClick={() => handleViewDetail(purpose)}
                           title="View purpose details"

@@ -3,10 +3,51 @@
  */
 
 export type DeliveryChannel = "sms" | "email" | "whatsapp";
+export type OtpChannel = "WHATSAPP" | "EMAIL" | "SMS";
 
 export type OtpStatus = "pending" | "verified" | "expired" | "failed";
 
 export type ProviderName = "twilio" | "aws-sns" | "sendgrid" | "messagebird" | "whatsapp-cloud";
+
+/**
+ * Payload for /api/otp/v1/test/generate
+ */
+export interface OtpGeneratePayload {
+  secretKey: string;
+  purposeId: string;
+  userId: string;
+  channel: Array<OtpChannel | string>;
+}
+
+export interface OtpGenerateResponse {
+  success: boolean;
+  message: string;
+  data?: unknown;
+  code?: string;
+  debugCode?: string;
+  requestId?: string;
+  status?: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Payload for /api/otp/v1/test/verify
+ */
+export interface OtpTestVerifyPayload {
+  secretKey: string;
+  userId: string;
+  code: string;
+  recipient?: string;
+}
+
+export interface OtpTestVerifyResponse {
+  success: boolean;
+  verified: boolean;
+  message: string;
+  data?: unknown;
+  attemptsRemaining?: number;
+  [key: string]: unknown;
+}
 
 export interface OtpRequestPayload {
   recipient: string; // Phone number with E.164 (e.g. +1234567890) or email address
@@ -15,6 +56,9 @@ export interface OtpRequestPayload {
   expirySeconds?: number; // Default 300 (5 mins)
   metadata?: Record<string, unknown>;
   templateId?: string;
+  secretKey?: string;
+  purposeId?: string;
+  userId?: string;
 }
 
 export interface OtpSendResponse {
@@ -31,8 +75,10 @@ export interface OtpSendResponse {
 }
 
 export interface OtpVerifyPayload {
+  secretKey?: string;
+  userId?: string;
   requestId?: string;
-  recipient: string;
+  recipient?: string;
   code: string;
 }
 

@@ -8,4 +8,5 @@ export interface AppEnv {
   otpExpirySeconds: number;
   otpCodeLength: number;
   otpMaxAttempts: number;
+  otpResendCooldownSeconds: number;
 }

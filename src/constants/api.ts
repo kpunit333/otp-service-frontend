@@ -18,6 +18,10 @@ export const API_ENDPOINTS = {
   OTP_LOGS: "/api/otp/logs",
   KEYS: "/api/keys",
 
+  // Real OTP Service Test Endpoints
+  OTP_TEST_GENERATE: `${BACKEND_BASE_URL}/api/otp/v1/test/generate`,
+  OTP_TEST_VERIFY: `${BACKEND_BASE_URL}/api/otp/v1/test/verify`,
+
   // Real Organization & Authentication Service Endpoints
   ORGANIZATION_CREATE: `${BACKEND_BASE_URL}/api/organizations/v1/organization`,
   ORGANIZATION_LOGIN: `${BACKEND_BASE_URL}/api/auth/o/login`,

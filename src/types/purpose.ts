@@ -4,6 +4,7 @@
  */
 export interface Purpose {
   code: string;
+  id?: string;
   name: string;
   description?: string;
   createdAt: string;

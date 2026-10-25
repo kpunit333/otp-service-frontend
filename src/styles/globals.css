@@ -57,13 +57,16 @@
 }
 
 /* Base Reset & Smooth Rendering */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
+html,
+body {
   min-height: 100vh;
   background-color: var(--bg-app);
   color: var(--text-main);
@@ -150,11 +153,12 @@ button:disabled {
 }
 
 .btn-component:hover:not(:disabled) {
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
 }
 
 .btn-component:active:not(:disabled) {
-  transform: translateY(1px) scale(0.98);
+  /* transform: translateY(1px) scale(0.98); */
+  transform: scale(0.98);
 }
 
 .btn-component:disabled {
@@ -173,12 +177,10 @@ button:disabled {
   left: -150%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.3) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 100%);
   transform: skewX(-25deg);
   transition: left 0.75s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
@@ -214,7 +216,7 @@ button:disabled {
   background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 
+  box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.35),
     0 4px 14px -1px rgba(99, 102, 241, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.38);
@@ -223,7 +225,7 @@ button:disabled {
 .btn-component.btn-primary:hover:not(:disabled) {
   background: linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #4f46e5 100%);
   border-color: rgba(255, 255, 255, 0.45);
-  box-shadow: 
+  box-shadow:
     0 4px 14px rgba(0, 0, 0, 0.3),
     0 8px 25px -2px rgba(99, 102, 241, 0.7),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -269,7 +271,7 @@ button:disabled {
   background: rgba(255, 255, 255, 0.06);
   color: var(--text-main);
   border-color: var(--border-subtle);
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); */
 }
 
 /* Danger Variant */
@@ -277,7 +279,7 @@ button:disabled {
   background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 
+  box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.35),
     0 4px 14px -1px rgba(244, 63, 94, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
@@ -286,7 +288,7 @@ button:disabled {
 .btn-component.btn-danger:hover:not(:disabled) {
   background: linear-gradient(135deg, #fb7185 0%, #f43f5e 50%, #e11d48 100%);
   border-color: rgba(255, 255, 255, 0.45);
-  box-shadow: 
+  box-shadow:
     0 4px 14px rgba(0, 0, 0, 0.3),
     0 8px 25px -2px rgba(244, 63, 94, 0.7),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -297,7 +299,7 @@ button:disabled {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 
+  box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.35),
     0 4px 14px -1px rgba(16, 185, 129, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
@@ -306,7 +308,7 @@ button:disabled {
 .btn-component.btn-success:hover:not(:disabled) {
   background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%);
   border-color: rgba(255, 255, 255, 0.45);
-  box-shadow: 
+  box-shadow:
     0 4px 14px rgba(0, 0, 0, 0.3),
     0 8px 25px -2px rgba(16, 185, 129, 0.7),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -429,13 +431,14 @@ button:disabled {
 }
 
 .channel-selector-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
   filter: brightness(1.15);
 }
 
 .channel-selector-btn:active:not(:disabled) {
-  transform: translateY(1px) scale(0.98);
+  /* transform: translateY(1px) scale(0.98); */
+  transform: scale(0.98);
 }
 
 /* Auth Card Tab Switcher Buttons */
@@ -466,7 +469,7 @@ button:disabled {
 .auth-tab-btn.inactive:hover {
   background: rgba(255, 255, 255, 0.07);
   color: var(--text-main);
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); */
 }
 
 .auth-tab-btn:active {
@@ -478,13 +481,16 @@ button:disabled {
   width: 8px;
   height: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--bg-surface);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--bg-surface-elevated);
   border-radius: var(--radius-full);
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--bg-surface-hover);
 }
@@ -516,17 +522,33 @@ button:disabled {
 
 /* Keyframe Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pulseGlow {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .animate-fade-in {
@@ -636,7 +658,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   color: #ffffff;
   background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%);
   border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 
+  box-shadow:
     0 1px 2px 0 rgba(0, 0, 0, 0.4),
     0 6px 20px -2px rgba(79, 70, 229, 0.55),
     0 12px 32px -4px rgba(99, 102, 241, 0.35),
@@ -651,9 +673,9 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .auth-submit-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
   background: linear-gradient(135deg, #818cf8 0%, #6366f1 40%, #4f46e5 100%);
-  box-shadow: 
+  box-shadow:
     0 2px 4px 0 rgba(0, 0, 0, 0.3),
     0 10px 30px -2px rgba(99, 102, 241, 0.7),
     0 18px 44px -4px rgba(79, 70, 229, 0.45),
@@ -670,8 +692,9 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .auth-submit-btn:active:not(:disabled) {
-  transform: translateY(1px) scale(0.99);
-  box-shadow: 
+  /* transform: translateY(1px) scale(0.99); */
+  transform: scale(0.99);
+  box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.6),
     0 3px 10px rgba(79, 70, 229, 0.4),
     inset 0 2px 4px rgba(0, 0, 0, 0.25);
@@ -697,12 +720,10 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   left: -150%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.25) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.25) 50%,
+      transparent 100%);
   transform: skewX(-25deg);
   transition: left 0.85s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
@@ -714,9 +735,12 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 
 /* OTP Slot Blinking Cursor */
 @keyframes otpCursorBlink {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0;
   }
@@ -736,9 +760,12 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
    ============================================================================== */
 
 @keyframes otpBtnPulseGlow {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 15px rgba(99, 102, 241, 0.4), 0 4px 14px rgba(0, 0, 0, 0.4);
   }
+
   50% {
     box-shadow: 0 0 25px rgba(99, 102, 241, 0.7), 0 6px 20px rgba(99, 102, 241, 0.35);
   }
@@ -756,7 +783,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   letter-spacing: 0.02em;
   color: #ffffff;
   background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%);
-  box-shadow: 
+  box-shadow:
     0 1px 2px 0 rgba(0, 0, 0, 0.35),
     0 6px 20px -2px rgba(99, 102, 241, 0.5),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
@@ -777,9 +804,9 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .otp-verify-submit-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
   background: linear-gradient(135deg, #818cf8 0%, #6366f1 45%, #4f46e5 100%);
-  box-shadow: 
+  box-shadow:
     0 2px 4px 0 rgba(0, 0, 0, 0.3),
     0 12px 30px -2px rgba(99, 102, 241, 0.65),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
@@ -787,8 +814,9 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .otp-verify-submit-btn:active:not(:disabled) {
-  transform: translateY(1px) scale(0.99);
-  box-shadow: 
+  /* transform: translateY(1px) scale(0.99); */
+  transform: scale(0.99);
+  box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.6),
     0 3px 10px rgba(79, 70, 229, 0.4);
 }
@@ -810,12 +838,10 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   left: -150%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.3) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 100%);
   transform: skewX(-25deg);
   transition: left 0.85s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
@@ -855,11 +881,12 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   background-color: rgba(255, 255, 255, 0.08);
   color: var(--text-main);
   border-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); */
 }
 
 .otp-reset-btn:active:not(:disabled) {
-  transform: translateY(1px);
+  /* transform: translateY(1px); */
+  transform: scale(0.99);
 }
 
 /* ==============================================================================
@@ -892,7 +919,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 
+  box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.4),
     0 4px 16px -2px rgba(99, 102, 241, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
@@ -905,21 +932,19 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   left: -150%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.35) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.35) 50%,
+      transparent 100%);
   transform: skewX(-25deg);
   transition: left 0.75s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
 }
 
 .nf-btn-back:hover {
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
   background: linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #4f46e5 100%);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.3),
     0 10px 25px -2px rgba(99, 102, 241, 0.7),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -931,7 +956,8 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .nf-btn-back:active {
-  transform: translateY(1px) scale(0.98);
+  /* transform: translateY(1px) scale(0.98); */
+  transform: scale(0.98);
 }
 
 .nf-btn-back .nf-icon-arrow {
@@ -939,7 +965,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .nf-btn-back:hover .nf-icon-arrow {
-  transform: translateX(-4px);
+  /* transform: translateX(-4px); */
 }
 
 /* 2. Dashboard / Home Button (Elevated Cyber Glass) */
@@ -947,25 +973,26 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-main);
   border: 1px solid var(--border-medium);
-  box-shadow: 
+  box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(8px);
 }
 
 .nf-btn-home:hover {
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
   border-color: rgba(6, 182, 212, 0.45);
-  box-shadow: 
+  box-shadow:
     0 4px 14px rgba(0, 0, 0, 0.3),
     0 0 20px rgba(6, 182, 212, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .nf-btn-home:active {
-  transform: translateY(1px) scale(0.98);
+  /* transform: translateY(1px) scale(0.98); */
+  transform: scale(0.98);
 }
 
 .nf-btn-home .nf-icon-home {
@@ -986,18 +1013,19 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .nf-btn-logout:hover {
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
   background: rgba(244, 63, 94, 0.16);
   color: #ffffff;
   border-color: rgba(244, 63, 94, 0.6);
-  box-shadow: 
+  box-shadow:
     0 4px 14px rgba(0, 0, 0, 0.3),
     0 0 24px rgba(244, 63, 94, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .nf-btn-logout:active {
-  transform: translateY(1px) scale(0.98);
+  /* transform: translateY(1px) scale(0.98); */
+  transform: scale(0.98);
 }
 
 .nf-btn-logout .nf-icon-logout {
@@ -1005,7 +1033,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .nf-btn-logout:hover .nf-icon-logout {
-  transform: translateX(3px);
+  /* transform: translateX(3px); */
   color: #ffffff;
 }
 
@@ -1032,7 +1060,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: var(--border-medium);
   color: var(--text-main);
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
@@ -1049,9 +1077,12 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
    ============================================================================== */
 
 @keyframes projectPulseGlow {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 16px rgba(99, 102, 241, 0.4), 0 4px 14px rgba(0, 0, 0, 0.35);
   }
+
   50% {
     box-shadow: 0 0 28px rgba(124, 58, 237, 0.65), 0 6px 20px rgba(99, 102, 241, 0.4);
   }
@@ -1078,7 +1109,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   user-select: none;
   animation: projectPulseGlow 3s infinite ease-in-out;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 
+  box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.3),
     0 6px 20px -2px rgba(99, 102, 241, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.45);
@@ -1091,21 +1122,19 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   left: -150%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.35) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.35) 50%,
+      transparent 100%);
   transform: skewX(-25deg);
   transition: left 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
 }
 
 .create-first-project-btn:hover {
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
   background: linear-gradient(135deg, #818cf8 0%, #6366f1 40%, #8b5cf6 100%);
-  box-shadow: 
+  box-shadow:
     0 4px 14px rgba(0, 0, 0, 0.3),
     0 12px 30px -2px rgba(124, 58, 237, 0.65),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -1117,7 +1146,8 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .create-first-project-btn:active {
-  transform: translateY(1px) scale(0.98);
+  /* transform: translateY(1px) scale(0.98); */
+  transform: scale(0.98);
 }
 
 .create-first-project-btn .btn-plus-icon {
@@ -1138,9 +1168,3 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   transform: scale(1.2);
   color: #fef08a;
 }
-
-
-
-
-
-

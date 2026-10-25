@@ -1,3 +1,5 @@
+import { env } from "@/environment/env";
+
 /**
  * OTP Service Operational Constants
  */
@@ -7,7 +9,7 @@ export const OTP_CONFIG = {
   MAX_LENGTH: 8,
   DEFAULT_EXPIRY_SECONDS: 300, // 5 minutes
   DEFAULT_MAX_ATTEMPTS: 3,
-  RESEND_COOLDOWN_SECONDS: 45,
+  RESEND_COOLDOWN_SECONDS: env.otpResendCooldownSeconds ?? 120, // 2 minutes (configurable from environment)
 } as const;
 
 export const DELIVERY_CHANNELS = [

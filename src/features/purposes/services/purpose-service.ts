@@ -76,8 +76,11 @@ class PurposeService {
    */
   private normalizePurpose(item: unknown): Purpose {
     const p = (typeof item === "object" && item !== null ? item : {}) as Record<string, unknown>;
+    const code = String(p.code || p.id || p.purposeId || "");
+    const id = p.id ? String(p.id) : (p.purposeId ? String(p.purposeId) : code);
     return {
-      code: String(p.code || ""),
+      code,
+      id,
       name: String(p.name || ""),
       description: p.description ? String(p.description) : "",
       createdAt: String(p.createdAt || new Date().toISOString()),

@@ -32,7 +32,9 @@ import {
   Sparkles,
   Mail,
   Lock,
+  Zap,
 } from "lucide-react";
+import Link from "next/link";
 
 export function ProjectList() {
   const { user } = useAuth();
@@ -571,6 +573,15 @@ export function ProjectList() {
                     {/* Actions */}
                     <TableCell style={{ textAlign: "right" }}>
                       <div style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+                        <Link
+                          href={`/dashboard/simulator?secretKey=${encodeURIComponent(project.secretKey || "")}&projectCode=${encodeURIComponent(project.code)}`}
+                          title="Test OTP with this project's secret key"
+                          className="btn-action-icon"
+                          style={{ color: "var(--primary)" }}
+                        >
+                          <Zap size={14} />
+                        </Link>
+
                         <button
                           type="button"
                           onClick={() => {
